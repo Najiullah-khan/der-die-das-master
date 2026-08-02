@@ -1,0 +1,24 @@
+{
+  "name": "@ddd/word-data",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "01-fetch-kaikki": "tsx scripts/01-fetch-kaikki.ts",
+    "02-parse-nouns": "tsx scripts/02-parse-nouns.ts",
+    "03-fetch-frequency": "tsx scripts/03-fetch-frequency.ts",
+    "04-merge": "tsx scripts/04-merge.ts",
+    "05-fetch-tatoeba": "tsx scripts/05-fetch-tatoeba.ts",
+    "06-assign-emoji": "tsx scripts/06-assign-emoji.ts",
+    "07-validate": "tsx scripts/07-validate.ts",
+    "pipeline": "tsx scripts/run-all.ts"
+  },
+  "dependencies": {
+    "@ddd/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.2"
+  }
+}

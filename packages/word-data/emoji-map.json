@@ -1,0 +1,49 @@
+{
+  "Hund": "🐶", "Katze": "🐱", "Maus": "🐭", "Vogel": "🐦", "Pferd": "🐴",
+  "Kuh": "🐮", "Schwein": "🐷", "Schaf": "🐑", "Ziege": "🐐", "Hase": "🐰", "Bär": "🐻",
+  "Löwe": "🦁", "Tiger": "🐯", "Elefant": "🐘", "Affe": "🐵", "Wolf": "🐺", "Fuchs": "🦊",
+  "Ente": "🦆", "Huhn": "🐔", "Biene": "🐝", "Schmetterling": "🦋", "Spinne": "🕷️", "Schlange": "🐍",
+  "Frosch": "🐸", "Schildkröte": "🐢", "Kaninchen": "🐇", "Delfin": "🐬", "Wal": "🐳", "Hai": "🦈",
+
+  "Haus": "🏠", "Wohnung": "🏢", "Schule": "🏫", "Krankenhaus": "🏥", "Kirche": "⛪", "Hotel": "🏨",
+  "Bank": "🏦", "Restaurant": "🍽️", "Café": "☕", "Geschäft": "🏪", "Markt": "🛒", "Fabrik": "🏭",
+  "Bahnhof": "🚉", "Flughafen": "✈️", "Brücke": "🌉", "Turm": "🗼", "Schloss": "🏰", "Zimmer": "🚪",
+  "Küche": "🍳", "Bad": "🛁", "Garten": "🌷", "Fenster": "🪟", "Tür": "🚪", "Dach": "🏠",
+
+  "Tisch": "🪑", "Stuhl": "🪑", "Bett": "🛏️", "Sofa": "🛋️", "Schrank": "🗄️", "Spiegel": "🪞",
+  "Lampe": "💡", "Kissen": "🛏️", "Decke": "🛌", "Tasse": "☕", "Teller": "🍽️", "Glas": "🥛",
+  "Messer": "🔪", "Gabel": "🍴", "Löffel": "🥄", "Topf": "🍲", "Pfanne": "🍳", "Flasche": "🍾",
+
+  "Brot": "🍞", "Milch": "🥛", "Apfel": "🍎", "Ei": "🥚", "Fleisch": "🥩", "Fisch": "🐟",
+  "Gemüse": "🥦", "Obst": "🍇", "Kaffee": "☕", "Tee": "🍵", "Bier": "🍺", "Wein": "🍷",
+  "Zucker": "🍬", "Salz": "🧂", "Käse": "🧀", "Kuchen": "🍰", "Schokolade": "🍫", "Reis": "🍚",
+  "Nudeln": "🍝", "Pizza": "🍕", "Suppe": "🍲", "Salat": "🥗", "Banane": "🍌", "Orange": "🍊",
+  "Zitrone": "🍋", "Erdbeere": "🍓", "Traube": "🍇", "Kartoffel": "🥔", "Karotte": "🥕", "Zwiebel": "🧅",
+  "Honig": "🍯", "Butter": "🧈", "Wasser": "💧",
+
+  "Auto": "🚗", "Bus": "🚌", "Zug": "🚆", "Flugzeug": "✈️", "Fahrrad": "🚲", "Schiff": "🚢",
+  "Boot": "⛵", "Motorrad": "🏍️", "Taxi": "🚕", "Straßenbahn": "🚋", "Rakete": "🚀",
+
+  "Kleidung": "👕", "Hemd": "👔", "Hose": "👖", "Schuh": "👞", "Mantel": "🧥", "Hut": "🎩",
+  "Brille": "👓", "Uhr": "⌚", "Ring": "💍", "Handschuh": "🧤", "Socke": "🧦", "Krawatte": "👔",
+  "Tasche": "👜", "Koffer": "🧳", "Regenschirm": "☂️",
+
+  "Sonne": "☀️", "Mond": "🌙", "Stern": "⭐", "Himmel": "🌌", "Regen": "🌧️", "Schnee": "❄️",
+  "Wind": "💨", "Wolke": "☁️", "Blitz": "⚡", "Feuer": "🔥", "Erde": "🌍", "Berg": "⛰️",
+  "Fluss": "🏞️", "See": "🏞️", "Meer": "🌊", "Wald": "🌲", "Baum": "🌳", "Blume": "🌸",
+  "Gras": "🌱", "Regenbogen": "🌈",
+
+  "Familie": "👪", "Mutter": "👩", "Vater": "👨", "Kind": "🧒", "Bruder": "👦", "Schwester": "👧",
+  "Baby": "👶", "Mann": "👨", "Frau": "👩", "Mädchen": "👧", "Junge": "👦", "Freund": "🧑‍🤝‍🧑",
+  "Freundin": "🧑‍🤝‍🧑", "Lehrer": "🧑‍🏫", "Lehrerin": "🧑‍🏫", "Arzt": "🧑‍⚕️", "Ärztin": "🧑‍⚕️",
+  "Koch": "🧑‍🍳", "Köchin": "🧑‍🍳", "Polizist": "👮", "Kellner": "🧑‍🍳",
+
+  "Buch": "📖", "Zeitung": "📰", "Brief": "✉️", "Bild": "🖼️", "Foto": "📷", "Musik": "🎵",
+  "Film": "🎬", "Computer": "💻", "Telefon": "☎️", "Handy": "📱", "Stift": "✏️", "Papier": "📄",
+  "Geld": "💰", "Schlüssel": "🔑", "Ball": "⚽", "Spiel": "🎮", "Geschenk": "🎁",
+
+  "Herz": "❤️", "Kopf": "🗣️", "Auge": "👁️", "Hand": "✋", "Fuß": "🦶", "Ohr": "👂",
+
+  "Idee": "💡", "Freiheit": "🕊️", "Liebe": "❤️", "Glück": "🍀", "Traum": "💭", "Angst": "😨",
+  "Freude": "😄", "Hoffnung": "🌟"
+}

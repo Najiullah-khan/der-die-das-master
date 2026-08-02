@@ -1,0 +1,15 @@
+{
+  "name": "der-die-das-master",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "pipeline": "pnpm --filter word-data run pipeline",
+    "seed": "pnpm --filter web run seed"
+  },
+  "packageManager": "pnpm@10.34.5"
+}

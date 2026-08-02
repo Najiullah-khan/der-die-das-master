@@ -1,0 +1,34 @@
+node_modules/
+.pnpm-store/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# build output
+.next/
+out/
+dist/
+.turbo/
+.wrangler/
+.open-next/
+
+# data pipeline — only the final validated dataset (nouns.json) is committed;
+# intermediate stages are large, regenerable, cached build artifacts.
+packages/word-data/raw/
+packages/word-data/processed/nouns-raw.json
+packages/word-data/processed/nouns-merged.json
+packages/word-data/processed/nouns-with-emoji.json
+packages/word-data/processed/review-queue.json
+
+# local db
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*
