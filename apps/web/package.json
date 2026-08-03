@@ -10,6 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "seed": "tsx scripts/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
@@ -37,6 +39,8 @@
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.19.2",
     "@opennextjs/cloudflare": "^1.20.2",
-    "wrangler": "^4.118.0"
+    "wrangler": "^4.118.0",
+    "vitest": "^4.1.10",
+    "jsdom": "^26.1.0"
   }
 }

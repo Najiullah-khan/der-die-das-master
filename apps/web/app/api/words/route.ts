@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "@/lib/db/client";
-import { words } from "@/lib/db/schema";
+import { getWordBatch } from "@/lib/db/queries/words";
 
 const querySchema = z.object({
   level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
@@ -16,14 +14,6 @@ export async function GET(request: NextRequest) {
   }
   const { level, count } = parsed.data;
 
-  // Simple frequency-ordered batch for now; weighted "no word left behind" selection
-  // (favoring the user's weak words) is Phase 2 game-engine work.
-  const batch = await db
-    .select()
-    .from(words)
-    .where(eq(words.cefrLevel, level))
-    .orderBy(asc(words.frequencyRank))
-    .limit(count);
-
+  const batch = await getWordBatch(level, count);
   return NextResponse.json({ words: batch });
 }

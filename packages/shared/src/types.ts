@@ -17,6 +17,8 @@ export interface EmojiAssignment {
 
 /** A single noun as it exists in the final, validated dataset (`nouns.json`) and the `Words` table. */
 export interface Word {
+  /** DB primary key. Absent on the raw pipeline dataset (`nouns.json`), present once seeded/queried from `Words`. */
+  id?: number;
   noun: string;
   slug: string;
   article: Article;
