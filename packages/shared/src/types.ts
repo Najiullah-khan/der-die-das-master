@@ -61,3 +61,98 @@ export interface WordStats {
   correct: number;
   mastery: Mastery;
 }
+
+/** One row in a `/api/codex` search result: the word plus the caller's own stats, if any. */
+export interface CodexEntry extends Word {
+  stats: WordStats | null;
+}
+
+export interface CodexSearchResponse {
+  entries: CodexEntry[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+/**
+ * The Codex page's mastery *filter* — distinct from the per-word `Mastery` label stored in
+ * `UserWordStats` (never_seen/discovered/struggled group several raw Mastery values together;
+ * see `searchWords` for the exact query semantics of each).
+ */
+export type CodexMasteryFilter = "never_seen" | "discovered" | "struggled" | "any";
+
+export interface StreakSummary {
+  currentDailyStreak: number;
+  highestDailyStreak: number;
+  currentSessionStreak: number;
+  highestSessionStreak: number;
+  lastPlayedDate: string | null;
+}
+
+export interface AchievementStatus {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  /** Epoch ms, or null if not yet unlocked. */
+  unlockedAt: number | null;
+}
+
+export interface AchievementsResponse {
+  achievements: AchievementStatus[];
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  displayName: string;
+  score: number;
+  wordsMastered: number | null;
+  currentDailyStreak: number;
+}
+
+export interface LeaderboardResponse {
+  range: "weekly" | "alltime";
+  entries: LeaderboardEntry[];
+  /** The requesting user's own row (even when outside `entries`) — null for guests, or an authed user with no score this period. */
+  viewer: LeaderboardEntry | null;
+}
+
+export interface DailyMissionStatus {
+  label: string;
+  progress: number;
+  goal: number;
+  complete: boolean;
+}
+
+/** A blog post, admin-authored via `/admin` CRUD, rendered publicly at `/blog` once published. */
+export interface Post {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  contentMarkdown: string;
+  published: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface PostInput {
+  title: string;
+  slug: string;
+  excerpt: string;
+  contentMarkdown: string;
+  published: boolean;
+}
+
+export type FeedbackType = "bug" | "feature" | "general";
+
+/** A user- or guest-submitted feedback/bug report, viewable by admins at /admin/feedback. */
+export interface Feedback {
+  id: string;
+  userId: string | null;
+  email: string | null;
+  type: FeedbackType;
+  message: string;
+  createdAt: number;
+}

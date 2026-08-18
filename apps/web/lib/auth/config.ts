@@ -19,6 +19,11 @@ export const auth = betterAuth({
     usePlural: false,
   }),
 
+  // Rate limiting is on by default in production (blueprint §10: "/api/auth/*"); "database"
+  // storage is required here — the default "memory" backend resets per-isolate on Cloudflare
+  // Workers and wouldn't actually limit anything across requests.
+  rateLimit: { storage: "database" },
+
   // Guest play never requires auth; sign-in is an optional "save your progress" step
   // (blueprint §5) prompted after a session, not gated up front.
   socialProviders: {

@@ -1,9 +1,18 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from "vitest";
-import { clearGuestProgress, loadGuestProgress, recordAttempt, recordSessionComplete } from "./storage";
+import {
+  clearGuestProgress,
+  loadGuestProgress,
+  recordAttempt,
+  recordBatchComplete,
+  recordSessionComplete,
+  hasSeenSaveProgressPrompt,
+  markSaveProgressPromptSeen,
+} from "./storage";
 
 beforeEach(() => {
   clearGuestProgress();
+  window.localStorage.clear();
 });
 
 describe("loadGuestProgress", () => {
@@ -42,5 +51,37 @@ describe("recordSessionComplete", () => {
     progress = loadGuestProgress();
     expect(progress.totalScore).toBe(250);
     expect(progress.streaks.currentDailyStreak).toBe(2);
+  });
+});
+
+describe("recordBatchComplete", () => {
+  it("tracks the resume level and the highest fully-completed batch (resume-state upgrade)", () => {
+    expect(loadGuestProgress().lastPlayedLevel).toBeNull();
+
+    recordBatchComplete("A1", 1);
+    let progress = loadGuestProgress();
+    expect(progress.lastPlayedLevel).toBe("A1");
+    expect(progress.completedBatches.A1).toBe(1);
+    // selectedBatch is the *next* batch to play, not the one just finished (batch auto-advance
+    // fix) — a returning user should land on Batch 2, not restart Batch 1.
+    expect(progress.levelProgress.A1).toMatchObject({ highestBatchReached: 2, selectedBatch: 2 });
+
+    recordBatchComplete("A2", 3);
+    progress = loadGuestProgress();
+    expect(progress.lastPlayedLevel).toBe("A2");
+    expect(progress.completedBatches).toEqual({ A1: 1, A2: 3 });
+
+    // Replaying an earlier batch doesn't regress the level's highest completed batch.
+    recordBatchComplete("A2", 1);
+    progress = loadGuestProgress();
+    expect(progress.completedBatches.A2).toBe(3);
+  });
+});
+
+describe("save-progress prompt", () => {
+  it("is unseen until explicitly marked", () => {
+    expect(hasSeenSaveProgressPrompt()).toBe(false);
+    markSaveProgressPromptSeen();
+    expect(hasSeenSaveProgressPrompt()).toBe(true);
   });
 });

@@ -1,8 +1,8 @@
 import type { Article } from "./types";
 
-/** Deterministic slug for a noun's SEO page, e.g. ("der", "Hund") -> "der-hund", ("die", "Straße") -> "die-strasse". */
-export function slugifyGermanNoun(article: Article, noun: string): string {
-  const transliterated = noun
+/** Lowercase, hyphenated, ASCII slug (German umlauts transliterated), e.g. "10 Rules for Genders!" -> "10-rules-for-genders". */
+export function slugify(text: string): string {
+  const transliterated = text
     .replace(/ä/g, "ae")
     .replace(/ö/g, "oe")
     .replace(/ü/g, "ue")
@@ -11,10 +11,13 @@ export function slugifyGermanNoun(article: Article, noun: string): string {
     .replace(/Ü/g, "Ue")
     .replace(/ß/g, "ss");
 
-  const cleaned = transliterated
+  return transliterated
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
 
-  return `${article}-${cleaned}`;
+/** Deterministic slug for a noun's SEO page, e.g. ("der", "Hund") -> "der-hund", ("die", "Straße") -> "die-strasse". */
+export function slugifyGermanNoun(article: Article, noun: string): string {
+  return `${article}-${slugify(noun)}`;
 }

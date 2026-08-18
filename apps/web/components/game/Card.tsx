@@ -1,33 +1,27 @@
 "use client";
 
 import type { Word } from "@ddd/shared";
-import { resolveEmoji } from "@/lib/emoji/resolve";
+import { WordEmoji } from "@/components/word/WordEmoji";
 
 export function Card({ word, feedback }: { word: Word; feedback: "correct" | "incorrect" | null }) {
-  const resolved = resolveEmoji(word.noun, word.article, word.emoji);
-
   return (
     <div
-      className={`flex h-56 w-full flex-col items-center justify-center gap-3 rounded-2xl text-7xl transition-colors ${
+      className={`flex h-56 w-full flex-col items-center justify-center gap-3 rounded-3xl shadow-sm transition-colors ${
         feedback === "correct"
-          ? "bg-green-100 dark:bg-green-900/40"
+          ? "animate-correct-pop bg-das/15 dark:bg-das/25"
           : feedback === "incorrect"
-            ? "bg-red-100 dark:bg-red-900/40 animate-shake"
+            ? "animate-shake bg-die/15 dark:bg-die/25"
             : "bg-neutral-100 dark:bg-neutral-900"
       }`}
     >
-      {resolved.kind === "emoji" ? (
-        <span aria-hidden>{resolved.glyph}</span>
-      ) : (
-        <span
-          className="flex h-24 w-24 items-center justify-center rounded-full text-4xl font-bold text-white"
-          style={{ backgroundColor: resolved.placeholderColor }}
-          aria-hidden
-        >
-          {resolved.placeholderLetter}
-        </span>
-      )}
+      <WordEmoji word={word} size={96} />
       <p className="text-2xl font-medium text-neutral-800 dark:text-neutral-100">{word.noun}</p>
+
+      {/* Correctness is otherwise conveyed only by background color + shake animation — neither
+          reaches a screen reader, so it needs an explicit (visually hidden) announcement. */}
+      <span role="status" className="sr-only">
+        {feedback === "correct" ? "Correct!" : feedback === "incorrect" ? "Incorrect" : ""}
+      </span>
     </div>
   );
 }

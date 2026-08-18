@@ -10,8 +10,8 @@ const IN_FILE = path.join(PROCESSED_DIR, "nouns-with-emoji.json");
 const OUT_FILE = path.join(PROCESSED_DIR, "nouns.json");
 const REVIEW_FILE = path.join(PROCESSED_DIR, "review-queue.json");
 
-/** MVP ships A1-B1 only (blueprint §17); B2-C2 stay cached in nouns-with-emoji.json for a later level unlock. */
-const MVP_LEVELS = new Set(["A1", "A2", "B1"]);
+/** Ships A1-B2 (B2 level unlock); C1-C2 stay cached in nouns-with-emoji.json for a later unlock. */
+const MVP_LEVELS = new Set(["A1", "A2", "B1", "B2"]);
 
 function validate(n: NounWithEmoji): string[] {
   const errors: string[] = [];
@@ -80,7 +80,7 @@ async function main() {
   }, {});
   const withExample = final.filter((w) => w.exampleDe).length;
 
-  console.log(`[07] MVP dataset: ${final.length} words (A1-B1). ${rejected.length} rejected to review queue.`);
+  console.log(`[07] Dataset: ${final.length} words (levels: ${[...MVP_LEVELS].join(", ")}). ${rejected.length} rejected to review queue.`);
   console.log("[07] By level:", byLevel);
   console.log("[07] By emoji source:", byEmojiSource);
   console.log(`[07] ${withExample}/${final.length} have an example sentence.`);

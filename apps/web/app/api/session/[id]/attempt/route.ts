@@ -5,6 +5,7 @@ import { db } from "@/lib/db/client";
 import { gameSessions, sessionAttempts, userWordStats } from "@/lib/db/schema";
 import { getWordById } from "@/lib/db/queries/words";
 import { pointsForAttempt, calculateMastery } from "@/lib/game-engine/scoring";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 const bodySchema = z.object({
   wordId: z.number().int().positive(),
@@ -14,6 +15,10 @@ const bodySchema = z.object({
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: sessionId } = await params;
+
+  // Generous — a real player tops out well under 2/sec — but enough to stop scripted farming.
+  const { allowed } = await checkRateLimit("session:attempt", getClientIp(request.headers), 120);
+  if (!allowed) return rateLimitResponse();
 
   const json = await request.json().catch(() => null);
   const parsed = bodySchema.safeParse(json);

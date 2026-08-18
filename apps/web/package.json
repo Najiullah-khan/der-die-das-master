@@ -10,6 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "seed": "tsx scripts/seed.ts",
+    "refresh-leaderboard": "tsx scripts/refresh-leaderboard.ts",
+    "enrich:emojis": "tsx scripts/enrich-emojis.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "cf:build": "opennextjs-cloudflare build",
@@ -17,30 +19,32 @@
     "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.6.25",
+    "@ddd/shared": "workspace:*",
+    "@libsql/client": "^0.17.4",
+    "better-auth": "^1.6.25",
+    "drizzle-orm": "^0.45.2",
+    "lucide-react": "^1.30.0",
+    "marked": "^18.0.9",
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "@ddd/shared": "workspace:*",
-    "@libsql/client": "^0.17.4",
-    "drizzle-orm": "^0.45.2",
-    "better-auth": "^1.6.25",
-    "@better-auth/drizzle-adapter": "^1.6.25",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "jsdom": "^26.1.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "drizzle-kit": "^0.31.10",
     "tsx": "^4.19.2",
-    "@opennextjs/cloudflare": "^1.20.2",
-    "wrangler": "^4.118.0",
+    "typescript": "^5",
     "vitest": "^4.1.10",
-    "jsdom": "^26.1.0"
+    "wrangler": "^4.118.0"
   }
 }

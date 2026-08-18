@@ -9,7 +9,10 @@ export function ProgressBar({ completed, total }: { completed: number; total: nu
       aria-valuemin={0}
       aria-valuemax={total}
     >
-      <div className="h-full rounded-full bg-blue-600 transition-all duration-300" style={{ width: `${pct}%` }} />
+      <div
+        className="h-full rounded-full bg-linear-to-r from-der to-das transition-all duration-300"
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 }

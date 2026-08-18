@@ -8,6 +8,48 @@
       "when": 1785698096968,
       "tag": "0000_glorious_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785879407587,
+      "tag": "0001_hard_silver_centurion",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785961052490,
+      "tag": "0002_cool_shadowcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1786118941407,
+      "tag": "0003_goofy_wasp",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1786135268320,
+      "tag": "0004_workable_triathlon",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1786542487561,
+      "tag": "0005_cynical_riptide",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1786563110773,
+      "tag": "0006_ambitious_wilson_fisk",
+      "breakpoints": true
     }
   ]
 }

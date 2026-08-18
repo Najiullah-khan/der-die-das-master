@@ -1,0 +1,1 @@
+ALTER TABLE `user_progress` ADD `last_played_at` integer;

@@ -1,9 +1,11 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { sql } from "drizzle-orm";
 import type { Word } from "@ddd/shared";
 import { db } from "../lib/db/client";
-import { words } from "../lib/db/schema";
+import { achievements, words } from "../lib/db/schema";
+import { ACHIEVEMENTS } from "../lib/game-engine/achievements";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const NOUNS_FILE = path.resolve(__dirname, "../../../packages/word-data/processed/nouns.json");
@@ -36,6 +38,23 @@ async function main() {
     await db.insert(words).values(batch).onConflictDoNothing();
     console.log(`  ${Math.min(i + BATCH_SIZE, nouns.length)}/${nouns.length}`);
   }
+
+  console.log(`Seeding ${ACHIEVEMENTS.length} achievement definitions...`);
+  await db
+    .insert(achievements)
+    .values(
+      ACHIEVEMENTS.map((a) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        icon: a.icon,
+        criteriaJson: JSON.stringify(a.criteria),
+      })),
+    )
+    .onConflictDoUpdate({
+      target: achievements.id,
+      set: { title: sql`excluded.title`, description: sql`excluded.description`, icon: sql`excluded.icon`, criteriaJson: sql`excluded.criteria_json` },
+    });
 
   console.log("Done.");
 }
