@@ -10,6 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "seed": "tsx scripts/seed.ts",
+    "seed:word-relations": "tsx scripts/seed-word-relations.ts",
+    "seed:blog-posts": "tsx scripts/seed-blog-posts.ts",
     "refresh-leaderboard": "tsx scripts/refresh-leaderboard.ts",
     "enrich:emojis": "tsx scripts/enrich-emojis.ts",
     "test": "vitest run",

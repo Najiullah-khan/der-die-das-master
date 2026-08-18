@@ -1,7 +1,7 @@
-import { and, asc, eq, gt, isNull, like, ne, or, sql } from "drizzle-orm";
+import { and, asc, eq, gt, isNull, like, notInArray, or, sql } from "drizzle-orm";
 import type { Article, CefrLevel, CodexMasteryFilter } from "@ddd/shared";
 import { db } from "@/lib/db/client";
-import { userWordStats, words } from "@/lib/db/schema";
+import { userWordStats, wordRelations, words } from "@/lib/db/schema";
 
 /**
  * Frequency-ordered batch for a new session. Weighting by the authenticated user's weak
@@ -69,18 +69,33 @@ export async function getWordCountByLevel(level: CefrLevel): Promise<number> {
 }
 
 /**
- * "Related nouns" for SEO internal linking (blueprint §8.1) — same article + level, since
- * the dataset has no topic/category tagging yet (blueprint §3 `WordRelations.relation_type`
- * `same_topic`/`compound` would need that data). Same-article grouping still reinforces the
- * gender pattern the learner is trying to internalize, which is the point of the page.
+ * "Related nouns" for SEO internal linking (blueprint §8.1). Prioritizes genuine
+ * `word_relations.relation_type = 'same_topic'` matches (curated vocabulary groups — see
+ * scripts/seed-word-relations.ts — not every word has these) before falling back to the
+ * same-article + same-level pool to fill out the rest. Same-article fallback still reinforces
+ * the gender pattern the learner is trying to internalize, which is the point of the page.
  */
 export async function getRelatedWords(word: { id: number; article: Article; cefrLevel: CefrLevel }, limit = 6) {
-  return db
-    .select()
-    .from(words)
-    .where(and(eq(words.article, word.article), eq(words.cefrLevel, word.cefrLevel), ne(words.id, word.id)))
+  const topicRows = await db
+    .select({ word: words })
+    .from(wordRelations)
+    .innerJoin(words, eq(words.id, wordRelations.relatedWordId))
+    .where(and(eq(wordRelations.wordId, word.id), eq(wordRelations.relationType, "same_topic")))
     .orderBy(asc(words.frequencyRank))
     .limit(limit);
+  const topicWords = topicRows.map((r) => r.word);
+
+  if (topicWords.length >= limit) return topicWords;
+
+  const excludeIds = [word.id, ...topicWords.map((w) => w.id)];
+  const fallbackWords = await db
+    .select()
+    .from(words)
+    .where(and(eq(words.article, word.article), eq(words.cefrLevel, word.cefrLevel), notInArray(words.id, excludeIds)))
+    .orderBy(asc(words.frequencyRank))
+    .limit(limit - topicWords.length);
+
+  return [...topicWords, ...fallbackWords];
 }
 
 export interface SearchWordsParams {
