@@ -38,6 +38,36 @@ export async function getWordBySlug(slug: string) {
   return word ?? null;
 }
 
+/** All slugs for one article — `generateStaticParams` source for `/der/[noun]` etc. */
+export async function getWordSlugsByArticle(article: Article) {
+  return db.select({ slug: words.slug }).from(words).where(eq(words.article, article));
+}
+
+/** Top (highest-frequency) nouns for an article+level pair — article hub word lists. */
+export async function getTopWordsByArticleAndLevel(article: Article, level: CefrLevel, limit: number) {
+  return db
+    .select()
+    .from(words)
+    .where(and(eq(words.article, article), eq(words.cefrLevel, level)))
+    .orderBy(asc(words.frequencyRank))
+    .limit(limit);
+}
+
+export async function getWordCountByArticle(article: Article): Promise<number> {
+  const [row] = await db.select({ n: sql<number>`count(*)` }).from(words).where(eq(words.article, article));
+  return row?.n ?? 0;
+}
+
+/** Top (highest-frequency) nouns for a CEFR level — level hub word lists. */
+export async function getTopWordsByLevel(level: CefrLevel, limit: number) {
+  return db.select().from(words).where(eq(words.cefrLevel, level)).orderBy(asc(words.frequencyRank)).limit(limit);
+}
+
+export async function getWordCountByLevel(level: CefrLevel): Promise<number> {
+  const [row] = await db.select({ n: sql<number>`count(*)` }).from(words).where(eq(words.cefrLevel, level));
+  return row?.n ?? 0;
+}
+
 /**
  * "Related nouns" for SEO internal linking (blueprint §8.1) — same article + level, since
  * the dataset has no topic/category tagging yet (blueprint §3 `WordRelations.relation_type`

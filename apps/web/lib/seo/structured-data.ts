@@ -1,5 +1,6 @@
 import type { Article, CefrLevel } from "@ddd/shared";
 import { getSiteUrl } from "./site-url";
+import { wordPath } from "./word-url";
 
 interface StructuredDataPost {
   slug: string;
@@ -32,6 +33,30 @@ export function buildPostStructuredData(post: StructuredDataPost) {
       },
     },
   ];
+}
+
+/**
+ * WebSite JSON-LD with a SearchAction (blueprint §8.1's sitewide-search guidance) — lets Google
+ * offer a search box for this site directly in results. `target` points at `/dictionary`, the
+ * only route that actually reads a `q` query param and filters (CodexBrowser's `initialSearch`).
+ */
+export function buildWebSiteStructuredData() {
+  const siteUrl = getSiteUrl();
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Der-Die-Das Master",
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/dictionary?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
 }
 
 /** WebApplication + Course JSON-LD for the homepage — the two schema.org types that best fit a free, browser-based learning tool (blueprint §8.1's structured-data guidance, applied to `/` rather than a word page). */
@@ -80,7 +105,7 @@ interface StructuredDataWord {
  */
 export function buildWordStructuredData(word: StructuredDataWord) {
   const siteUrl = getSiteUrl();
-  const pageUrl = `${siteUrl}/word/${word.slug}`;
+  const pageUrl = `${siteUrl}${wordPath(word)}`;
 
   const definedTerm = {
     "@context": "https://schema.org",

@@ -6,6 +6,7 @@ import type { Article, CefrLevel, CodexEntry, CodexMasteryFilter, CodexSearchRes
 import { PLAYABLE_LEVELS } from "@/lib/game-engine/levels";
 import { useSession } from "@/lib/auth/client";
 import { WordEmoji } from "@/components/word/WordEmoji";
+import { wordPath } from "@/lib/seo/word-url";
 const MASTERY_FILTERS: { value: CodexMasteryFilter; label: string }[] = [
   { value: "never_seen", label: "Never Seen" },
   { value: "discovered", label: "Discovered" },
@@ -35,14 +36,17 @@ interface CodexBrowserProps {
   initialEntries: CodexEntry[];
   initialTotal: number;
   limit: number;
+  /** Seeds search from the page's `?q=` (the WebSite SearchAction's target) so a search-engine
+   *  deep link lands already filtered instead of resetting to the unfiltered default view. */
+  initialSearch?: string;
 }
 
-export function CodexBrowser({ initialEntries, initialTotal, limit }: CodexBrowserProps) {
+export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearch = "" }: CodexBrowserProps) {
   const { data: session, isPending } = useSession();
   const isAuthed = Boolean(session?.user);
 
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
   const [level, setLevel] = useState<CefrLevel | "">("");
   const [mastery, setMastery] = useState<CodexMasteryFilter>(DEFAULT_MASTERY_FILTER);
   const [offset, setOffset] = useState(0);
@@ -184,7 +188,7 @@ export function CodexBrowser({ initialEntries, initialTotal, limit }: CodexBrows
               className="relative flex items-center gap-3 rounded-2xl border border-neutral-200 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800"
             >
               <WordEmoji word={word} size={36} />
-              <a href={`/word/${word.slug}`} className="min-w-0 flex-1">
+              <a href={wordPath(word)} className="min-w-0 flex-1">
                 <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${GENDER_BADGE[word.article]}`}>
                   {word.article}
                 </span>

@@ -8,6 +8,8 @@ import { AdminFooterLink } from "@/components/layout/AdminFooterLink";
 import { FeedbackTrigger } from "@/components/feedback/FeedbackTrigger";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { buildWebSiteStructuredData } from "@/lib/seo/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -49,6 +51,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <JsonLd data={[buildWebSiteStructuredData()]} />
         <GuestProgressSync />
         <ServiceWorkerRegistration />
         <Navbar />

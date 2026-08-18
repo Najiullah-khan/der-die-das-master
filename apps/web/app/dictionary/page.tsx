@@ -15,8 +15,16 @@ const PAGE_SIZE = 50;
 // Session-agnostic on purpose (blueprint §1: "ISR, personalized parts fetched client-side") —
 // this shell renders the same unfiltered first page for every visitor so it stays cacheable;
 // CodexBrowser fetches an authed refresh client-side when there's a session to personalize with.
-export default async function DictionaryPage() {
-  const { rows, total } = await searchWords({ limit: PAGE_SIZE, offset: 0 });
+// A `?q=` (the WebSite SearchAction's target — lib/seo/structured-data.ts) is the one exception:
+// it's read here so the initial SSR response already reflects the search term instead of
+// silently dropping it, then handed to CodexBrowser as the seed for its own client-side search.
+export default async function DictionaryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const { rows, total } = await searchWords({ search: q, limit: PAGE_SIZE, offset: 0 });
   const initialEntries: CodexEntry[] = rows.map(({ word, stats }) => ({
     ...word,
     stats: stats ? { attempts: stats.attempts, correct: stats.correct, mastery: stats.mastery } : null,
@@ -29,7 +37,7 @@ export default async function DictionaryPage() {
         Browse and search the {total.toLocaleString()}-word noun dictionary.
       </p>
 
-      <CodexBrowser initialEntries={initialEntries} initialTotal={total} limit={PAGE_SIZE} />
+      <CodexBrowser initialEntries={initialEntries} initialTotal={total} limit={PAGE_SIZE} initialSearch={q ?? ""} />
     </main>
   );
 }

@@ -3,15 +3,15 @@ import type { Article } from "@ddd/shared";
 import { getWordBySlug } from "@/lib/db/queries/words";
 import { resolveEmoji } from "@/lib/emoji/resolve";
 
-export const alt = "Der-Die-Das Master word card";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+export const wordOgImageAlt = "Der-Die-Das Master word card";
+export const wordOgImageSize = { width: 1200, height: 630 };
+export const wordOgImageContentType = "image/png";
 
 const ARTICLE_COLOR: Record<Article, string> = { der: "#3b82f6", die: "#ef4444", das: "#22c55e" };
 
-export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const word = await getWordBySlug(slug);
+/** Shared `opengraph-image` renderer for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */
+export async function renderWordOgImage(article: Article, noun: string) {
+  const word = await getWordBySlug(`${article}-${noun}`);
 
   if (!word) {
     return new ImageResponse(
@@ -31,7 +31,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           Der-Die-Das Master
         </div>
       ),
-      size,
+      wordOgImageSize,
     );
   }
 
@@ -61,6 +61,6 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         <div style={{ display: "flex", fontSize: 40, color: "#a3a3a3", marginTop: 16 }}>{word.translation}</div>
       </div>
     ),
-    size,
+    wordOgImageSize,
   );
 }

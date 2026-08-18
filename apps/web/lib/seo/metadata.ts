@@ -22,7 +22,8 @@ interface BuildMetadataOptions {
  * file-convention auto-injection to supply: verified against a real production build that once a
  * page sets its own `openGraph` object (as every caller of this helper does), the root
  * `app/opengraph-image.tsx` fallback stops being attached automatically — so every page needs its
- * own explicit reference. Only `/word/[slug]` overrides this, with its own per-word image.
+ * own explicit reference. Only `/der`, `/die`, `/das` word pages override this, each with its
+ * own per-word image (lib/seo/word-page.tsx).
  */
 export function buildMetadata({ title, description, path, type = "website", noIndex = false }: BuildMetadataOptions): Metadata {
   const siteUrl = getSiteUrl();

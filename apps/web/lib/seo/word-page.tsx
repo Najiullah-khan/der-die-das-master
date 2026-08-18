@@ -1,42 +1,48 @@
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { db } from "@/lib/db/client";
-import { words } from "@/lib/db/schema";
-import { getWordBySlug, getRelatedWords } from "@/lib/db/queries/words";
+import { notFound } from "next/navigation";
+import type { Article } from "@ddd/shared";
+import { getWordBySlug, getRelatedWords, getWordSlugsByArticle } from "@/lib/db/queries/words";
 import { WordEmoji } from "@/components/word/WordEmoji";
 import { getGenderMnemonic } from "@/lib/seo/mnemonics";
 import { describePluralPattern } from "@/lib/seo/plural-pattern";
 import { buildWordStructuredData } from "@/lib/seo/structured-data";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getSiteUrl } from "@/lib/seo/site-url";
+import { wordPath } from "@/lib/seo/word-url";
+import { GENDER_LABEL } from "@/lib/seo/gender-rules";
 import { JsonLd } from "@/components/seo/JsonLd";
 
-export const revalidate = 3600; // ISR: word data changes rarely
-
-const GENDER_LABEL = { der: "masculine", die: "feminine", das: "neuter" } as const;
-
-export async function generateStaticParams() {
-  const rows = await db.select({ slug: words.slug }).from(words);
-  return rows.map((r) => ({ slug: r.slug }));
+/** Shared `generateStaticParams` body for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */
+export async function generateWordStaticParams(article: Article) {
+  const rows = await getWordSlugsByArticle(article);
+  return rows.map((r) => ({ noun: r.slug.slice(article.length + 1) }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const word = await getWordBySlug(slug);
+/** Shared `generateMetadata` body for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */
+export async function generateWordMetadata(article: Article, noun: string): Promise<Metadata> {
+  const word = await getWordBySlug(`${article}-${noun}`);
   if (!word) return {};
 
-  return {
+  const base = buildMetadata({
     title: `${word.noun} – der, die or das? German Article & Meaning | Der-Die-Das Master`,
     description: `${word.article} ${word.noun} (${GENDER_LABEL[word.article]}) means "${word.translation}". Plural: ${word.plural}. CEFR level ${word.cefrLevel}.`,
-    alternates: { canonical: `/word/${word.slug}` },
+    path: wordPath(word),
+  });
+
+  // Per-word OG image (this route's own opengraph-image.tsx) instead of buildMetadata's root
+  // fallback — see lib/seo/metadata.ts's doc comment on why every other page uses the default.
+  const image = { url: `${getSiteUrl()}${wordPath(word)}/opengraph-image`, width: 1200, height: 630 };
+
+  return {
+    ...base,
+    openGraph: { ...base.openGraph, images: [image] },
+    twitter: { ...base.twitter, images: [image.url] },
   };
 }
 
-export default async function WordPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const word = await getWordBySlug(slug);
+/** Shared page body for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */
+export async function WordPageBody({ article, noun }: { article: Article; noun: string }) {
+  const word = await getWordBySlug(`${article}-${noun}`);
   if (!word) notFound();
 
   const relatedWords = await getRelatedWords(word);
@@ -49,6 +55,10 @@ export default async function WordPage({ params }: { params: Promise<{ slug: str
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500">
         <a href="/" className="hover:underline">
           Home
+        </a>{" "}
+        /{" "}
+        <a href={`/${word.article}`} className="hover:underline">
+          {word.article}
         </a>{" "}
         /{" "}
         <a href={`/dictionary?level=${word.cefrLevel}`} className="hover:underline">
@@ -112,7 +122,7 @@ export default async function WordPage({ params }: { params: Promise<{ slug: str
             {relatedWords.map((related) => (
               <li key={related.slug}>
                 <a
-                  href={`/word/${related.slug}`}
+                  href={wordPath(related)}
                   className="inline-block rounded-full border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
                 >
                   {related.article} {related.noun}

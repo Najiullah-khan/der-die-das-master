@@ -173,16 +173,16 @@ every visitor's browser bundle.
       [Google Search Console](https://search.google.com/search-console) and
       [Bing Webmaster Tools](https://www.bing.com/webmasters) (both free, both external accounts
       only you can create — not something this doc or any script can do for you).
-- [ ] **Rich results check**: paste a `/word/[slug]` URL into Google's
-      [Rich Results Test](https://search.google.com/test/rich-results) — confirms the FAQPage/
-      DefinedTerm/BreadcrumbList JSON-LD parses correctly.
+- [ ] **Rich results check**: paste a `/der/[noun]`, `/die/[noun]`, or `/das/[noun]` URL into
+      Google's [Rich Results Test](https://search.google.com/test/rich-results) — confirms the
+      FAQPage/DefinedTerm/BreadcrumbList JSON-LD parses correctly.
 - [ ] **Security headers present**: `curl -I https://yourdomain.com` and confirm
       `Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options` are all there
       (set in `next.config.ts` — should carry through automatically, but worth a real check post-deploy).
 - [ ] **Leaderboard cron actually firing**: check `leaderboard.rankAlltime` isn't stale after the
       interval you configured (`turso db shell ... "select * from leaderboard limit 5"`).
 - [ ] **Web Vitals / Lighthouse**: run Lighthouse (Chrome DevTools → Lighthouse, or
-      [PageSpeed Insights](https://pagespeed.web.dev)) against the live homepage and a `/word/[slug]`
+      [PageSpeed Insights](https://pagespeed.web.dev)) against the live homepage and a `/der/[noun]`
       page. This app has no images and minimal client JS by design, so there's no structural
       reason for Core Web Vitals to be anything but strong — a bad score post-deploy usually
       means a hosting/CDN-caching misconfiguration, not the app itself.

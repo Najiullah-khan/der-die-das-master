@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/og";
 
 // Site-wide fallback OG image — used by every route that doesn't define its own more specific
-// opengraph-image (only /word/[slug] does). File-convention precedence: a segment's own
-// opengraph-image.tsx wins over this root one, so this never overrides that per-word image.
+// opengraph-image (only /der/[noun], /die/[noun], /das/[noun] do). File-convention precedence: a
+// segment's own opengraph-image.tsx wins over this root one, so this never overrides those.
 export const alt = "Der-Die-Das Master — learn German noun genders";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
