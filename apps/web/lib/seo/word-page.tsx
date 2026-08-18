@@ -11,6 +11,8 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 import { wordPath } from "@/lib/seo/word-url";
 import { GENDER_LABEL } from "@/lib/seo/gender-rules";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { PronounceButton } from "@/components/word/PronounceButton";
+import { WordQuizWidget } from "@/components/word/WordQuizWidget";
 
 /** Shared `generateStaticParams` body for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */
 export async function generateWordStaticParams(article: Article) {
@@ -72,7 +74,10 @@ export async function WordPageBody({ article, noun }: { article: Article; noun: 
         <h1 className="text-4xl font-bold">
           {word.article} {word.noun}
         </h1>
+        <PronounceButton article={word.article} noun={word.noun} />
       </div>
+
+      <WordQuizWidget article={word.article} noun={word.noun} />
 
       <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-300">{word.translation}</p>
 

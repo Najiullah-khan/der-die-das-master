@@ -7,6 +7,7 @@ import { PLAYABLE_LEVELS } from "@/lib/game-engine/levels";
 import { useSession } from "@/lib/auth/client";
 import { WordEmoji } from "@/components/word/WordEmoji";
 import { wordPath } from "@/lib/seo/word-url";
+import { pronounceWord } from "@/lib/speech/pronounce";
 const MASTERY_FILTERS: { value: CodexMasteryFilter; label: string }[] = [
   { value: "never_seen", label: "Never Seen" },
   { value: "discovered", label: "Discovered" },
@@ -24,12 +25,15 @@ const GENDER_BADGE: Record<Article, string> = {
   das: "bg-das/15 text-das-strong dark:text-das",
 };
 
-function pronounce(article: Article, noun: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  const utterance = new SpeechSynthesisUtterance(`${article} ${noun}`);
-  utterance.lang = "de-DE";
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+/** Builds a crawlable `/dictionary` URL for a given search + offset — used for the pagination
+ * links' real `href`s, not just their client-side onClick handlers. */
+function buildPageHref(search: string, targetOffset: number, limit: number): string {
+  const params = new URLSearchParams();
+  if (search) params.set("q", search);
+  const page = Math.floor(targetOffset / limit) + 1;
+  if (page > 1) params.set("page", String(page));
+  const qs = params.toString();
+  return qs ? `/dictionary?${qs}` : "/dictionary";
 }
 
 interface CodexBrowserProps {
@@ -39,9 +43,12 @@ interface CodexBrowserProps {
   /** Seeds search from the page's `?q=` (the WebSite SearchAction's target) so a search-engine
    *  deep link lands already filtered instead of resetting to the unfiltered default view. */
   initialSearch?: string;
+  /** Seeds pagination from the page's `?page=`/`?offset=` — same reasoning as `initialSearch`,
+   *  so a crawler (or a shared link) landing on page N gets that page's real SSR content. */
+  initialOffset?: number;
 }
 
-export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearch = "" }: CodexBrowserProps) {
+export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearch = "", initialOffset = 0 }: CodexBrowserProps) {
   const { data: session, isPending } = useSession();
   const isAuthed = Boolean(session?.user);
 
@@ -49,7 +56,7 @@ export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearc
   const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
   const [level, setLevel] = useState<CefrLevel | "">("");
   const [mastery, setMastery] = useState<CodexMasteryFilter>(DEFAULT_MASTERY_FILTER);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(initialOffset);
 
   const [fetched, setFetched] = useState<CodexSearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -69,12 +76,14 @@ export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearc
     if (offset !== 0) setOffset(0);
   }
 
+  // "Default view" means "exactly what the server already rendered" — initialSearch/initialOffset,
+  // not hardcoded ""/0, since the SSR shell now reflects the page's own ?q=/?page= (blueprint §1
+  // session-agnostic rendering still applies; this just generalizes it beyond the very first page).
   const isDefaultView =
-    debouncedSearch === "" && level === "" && mastery === DEFAULT_MASTERY_FILTER && offset === 0;
-  // The server already rendered the unfiltered first page for guests — skip the redundant
-  // refetch and just render what SSR gave us (mastery badges only exist for authed users, whose
-  // SSR shell is intentionally session-agnostic so /dictionary itself stays static/cacheable —
-  // blueprint §1). No state to reset here since we simply don't fetch in this case.
+    debouncedSearch === initialSearch && level === "" && mastery === DEFAULT_MASTERY_FILTER && offset === initialOffset;
+  // Skip the redundant refetch and just render what SSR gave us (mastery badges only exist for
+  // authed users, whose SSR shell is intentionally session-agnostic so /dictionary itself stays
+  // static/cacheable). No state to reset here since we simply don't fetch in this case.
   const skipFetch = isDefaultView && !isAuthed;
 
   useEffect(() => {
@@ -198,7 +207,7 @@ export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearc
               <div className="flex shrink-0 flex-col items-end gap-1.5">
                 <button
                   type="button"
-                  onClick={() => pronounce(word.article, word.noun)}
+                  onClick={() => pronounceWord(word.article, word.noun)}
                   aria-label={`Pronounce ${word.article} ${word.noun}`}
                   className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                 >
@@ -220,27 +229,47 @@ export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearc
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-4 text-sm">
-          <button
-            type="button"
-            onClick={() => setOffset((o) => Math.max(0, o - limit))}
-            disabled={offset === 0}
-            className="rounded-full border border-neutral-300 px-4 py-2 disabled:opacity-40 dark:border-neutral-700"
-          >
-            Previous
-          </button>
+        // Real `<a href>`s, not just onClick buttons — so a crawler without JS can walk the
+        // Previous/Next chain page by page and reach all 5,600+ words through on-page links,
+        // not just the XML sitemap. The onClick still intercepts for JS-enabled visitors so
+        // pagination stays instant/client-side instead of a full page reload.
+        <nav aria-label="Dictionary pagination" className="mt-6 flex items-center justify-center gap-4 text-sm">
+          {offset > 0 ? (
+            <a
+              href={buildPageHref(debouncedSearch, offset - limit, limit)}
+              onClick={(e) => {
+                e.preventDefault();
+                setOffset((o) => Math.max(0, o - limit));
+              }}
+              className="rounded-full border border-neutral-300 px-4 py-2 dark:border-neutral-700"
+            >
+              Previous
+            </a>
+          ) : (
+            <span aria-disabled="true" className="rounded-full border border-neutral-300 px-4 py-2 opacity-40 dark:border-neutral-700">
+              Previous
+            </span>
+          )}
           <span className="text-neutral-500">
             Page {page} of {totalPages}
           </span>
-          <button
-            type="button"
-            onClick={() => setOffset((o) => o + limit)}
-            disabled={offset + limit >= total}
-            className="rounded-full border border-neutral-300 px-4 py-2 disabled:opacity-40 dark:border-neutral-700"
-          >
-            Next
-          </button>
-        </div>
+          {offset + limit < total ? (
+            <a
+              href={buildPageHref(debouncedSearch, offset + limit, limit)}
+              onClick={(e) => {
+                e.preventDefault();
+                setOffset((o) => o + limit);
+              }}
+              className="rounded-full border border-neutral-300 px-4 py-2 dark:border-neutral-700"
+            >
+              Next
+            </a>
+          ) : (
+            <span aria-disabled="true" className="rounded-full border border-neutral-300 px-4 py-2 opacity-40 dark:border-neutral-700">
+              Next
+            </span>
+          )}
+        </nav>
       )}
     </div>
   );
