@@ -16,6 +16,9 @@ const bodySchema = z.object({
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Slug must be lowercase, alphanumeric, hyphen-separated"),
   excerpt: z.string().trim().min(1).max(500),
   contentMarkdown: z.string().trim().min(1),
+  category: z.string().trim().min(1).max(60).nullable().default(null),
+  metaTitle: z.string().trim().min(1).max(70).nullable().default(null),
+  metaDescription: z.string().trim().min(1).max(160).nullable().default(null),
   published: z.boolean().default(false),
 });
 
@@ -36,7 +39,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 });
   }
-  const { title, slug, excerpt, contentMarkdown, published } = parsed.data;
+  const { title, slug, excerpt, contentMarkdown, category, metaTitle, metaDescription, published } = parsed.data;
 
   if (await isSlugTaken(slug)) {
     return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
@@ -51,6 +54,9 @@ export async function POST(request: NextRequest) {
     title,
     excerpt,
     contentMarkdown,
+    category,
+    metaTitle,
+    metaDescription,
     published,
     createdAt: now,
     updatedAt: now,

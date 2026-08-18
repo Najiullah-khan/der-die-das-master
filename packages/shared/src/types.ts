@@ -132,6 +132,9 @@ export interface Post {
   title: string;
   excerpt: string;
   contentMarkdown: string;
+  category: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
   published: boolean;
   createdAt: number;
   updatedAt: number;
@@ -142,6 +145,9 @@ export interface PostInput {
   slug: string;
   excerpt: string;
   contentMarkdown: string;
+  category: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
   published: boolean;
 }
 

@@ -50,6 +50,20 @@
       "when": 1786563110773,
       "tag": "0006_ambitious_wilson_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787072747476,
+      "tag": "0007_bitter_ronan",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1787073835775,
+      "tag": "0008_lethal_chronomancer",
+      "breakpoints": true
     }
   ]
 }

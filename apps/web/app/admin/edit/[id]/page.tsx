@@ -38,12 +38,14 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   if (!post) notFound();
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
+    <main className="mx-auto max-w-6xl px-6 py-12">
       <h1 className="text-3xl font-bold">Edit Post</h1>
-      <PostForm
-        mode="edit"
-        post={{ ...post, createdAt: post.createdAt.getTime(), updatedAt: post.updatedAt.getTime() }}
-      />
+      <div className="mt-6">
+        <PostForm
+          mode="edit"
+          post={{ ...post, createdAt: post.createdAt.getTime(), updatedAt: post.updatedAt.getTime() }}
+        />
+      </div>
     </main>
   );
 }

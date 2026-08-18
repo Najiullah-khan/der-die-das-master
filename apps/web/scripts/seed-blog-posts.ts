@@ -22,6 +22,7 @@ const ARTICLE_1 = {
   slug: "12-german-gender-suffix-patterns",
   title: "12 German Gender Suffix Patterns That Help You Guess the Article",
   excerpt: "The 12 most reliable German noun suffixes for predicting der, die, or das — with the real exceptions named, not glossed over.",
+  category: "grammar",
   contentMarkdown: `Guessing a German noun's gender from its ending isn't a party trick — a handful of suffixes are consistent enough that native speakers lean on them without thinking. Here are 12 of the most useful ones, grouped by gender. For the full breakdown of reliable patterns versus statistical tendencies (and the real exceptions to each), see the [complete der, die, das guide](/der-die-das).
 
 ## Masculine (der) — 4 reliable suffixes
@@ -62,11 +63,16 @@ const ARTICLE_2 = {
   slug: "der-die-das-core-rules-and-patterns",
   title: "Der, Die, or Das? The Core Rules and Patterns for German Articles",
   excerpt: "How to actually predict German noun gender — suffixes, semantic categories, and when the honest answer is just to memorize it.",
+  category: "grammar",
   contentMarkdown: `Every German noun carries one of three grammatical genders — masculine (*der*), feminine (*die*), or neuter (*das*) — and it affects far more than the article itself: adjective endings, pronouns, and case declension all follow from it. That makes gender one of the highest-leverage things to get right early. Here's the honest, three-part strategy for predicting it.
 
 ## 1. Suffixes — the most reliable signal
 
-Certain noun endings predict gender with no known exceptions in standard German: **-ung, -heit, -keit, -schaft, -tät, -ion** are always [die](/die); **-ling, -or, -ismus, -ist** are always [der](/der); **-chen** and **-lein** are always [das](/das) (diminutives override the base word's own gender). Other endings like **-er**, **-en**, and **-o** are strong tendencies with real, commonly-cited exceptions — die [Mutter](/die/mutter), das [Fenster](/das/fenster), der [Euro](/der/euro) all break the pattern their ending suggests. The [full suffix guide](/der-die-das) separates all of these clearly, because treating a tendency as a rule is how learners end up more confused, not less.
+Certain noun endings predict gender with no known exceptions in standard German: **-ung, -heit, -keit, -schaft, -tät, -ion** are always [die](/die); **-ling, -or, -ismus, -ist** are always [der](/der); **-chen** and **-lein** are always [das](/das) (diminutives override the base word's own gender). Other endings like **-er**, **-en**, and **-o** are strong tendencies with real, commonly-cited exceptions.
+
+> ⚠️ **Watch out:** endings like -er, -en, and -o are tendencies, not rules — die [Mutter](/die/mutter), das [Fenster](/das/fenster), and der [Euro](/der/euro) all break the pattern their own ending suggests.
+
+The [full suffix guide](/der-die-das) separates all of these clearly, because treating a tendency as a rule is how learners end up more confused, not less.
 
 ## 2. Semantic categories — meaning predicts gender too
 
@@ -87,6 +93,7 @@ const ARTICLE_4 = {
   slug: "compound-nouns-in-german-gender",
   title: "Compound Nouns in German: How the Base Noun Determines Gender",
   excerpt: "German compound nouns always take the gender of their last component — the Grundwort — no matter how many words come before it.",
+  category: "grammar",
   contentMarkdown: `German famously builds long compound nouns by chaining words together — and one rule governs every single one of them: **the gender of a compound noun is always the gender of its last component** (the *Grundwort*, or "base word"). Everything before it just modifies the meaning; it never changes the article.
 
 ## The rule in practice
@@ -113,6 +120,7 @@ const ARTICLE_5 = {
   slug: "german-plural-formations-guide",
   title: "German Plural Formations: Matching Articles, Endings, and Umlauts",
   excerpt: "Every German plural pattern — no ending, umlaut-only, -e, -en, -er, -s, and the irregulars — with real examples and their articles.",
+  category: "plurals-endings",
   contentMarkdown: `The article a noun takes in the singular (der, die, das) has no bearing on how it forms its plural — German plurals follow their own set of patterns, and every plural noun takes **die** regardless of its singular article. Here are the patterns that cover almost every noun you'll meet, each with a real, verified example.
 
 ## No ending
@@ -171,6 +179,7 @@ const ARTICLE_6 = {
   slug: "why-learn-german-nouns-with-articles",
   title: "Why Learning German Nouns With Their Articles Accelerates Fluency",
   excerpt: "Treating a German noun and its article as one unit — not two separate facts — is what actually makes gender automatic.",
+  category: "mastery-strategy",
   contentMarkdown: `A common mistake for German learners is to treat vocabulary and grammar as two separate tracks: learn the word "Tisch," then separately try to remember that it's "der." In practice, this doubles the work and rarely sticks — because in German, gender isn't an add-on fact about a noun, it's baked into almost everything the noun touches.
 
 ## Gender isn't just the article
@@ -180,6 +189,8 @@ Once you commit to der [Tisch](/der/tisch), that single decision ripples outward
 - **Pronouns**: you refer back to it as *er* (he/it), not *sie* or *es*
 - **Adjective endings**: "der **groß-e** Tisch" vs. "die **groß-e** Lampe" vs. "das **groß-e** Haus" — the same adjective takes a different ending depending on gender and case
 - **Case declension**: "Ich sehe **den** Tisch" (accusative) only makes sense once you already know Tisch is masculine
+
+> 💡 **Key takeaway:** Learn der [Tisch](/der/tisch) as a single unit, never just Tisch — the article isn't optional metadata, it's part of the word.
 
 If you learn "Tisch" and its gender as two separate pieces of information, you have to look both up again every time you need to build a sentence. If you learn "der Tisch" as one unit from day one, the gender is just there, the way it's there for a native speaker.
 
@@ -202,6 +213,7 @@ async function main() {
       slug: "top-100-essential-a1-german-nouns",
       title: "Top 100 Essential A1 German Nouns and Their Articles",
       excerpt: "The 100 highest-frequency A1 German nouns, each with its article, translation, and a link to practice — pulled directly from our dictionary data.",
+      category: "a1-vocabulary",
       contentMarkdown: `These are the 100 highest-frequency nouns in our [A1 dictionary](/a1) — the words most worth learning first, each with its article already attached. Tap any noun to see its full page, complete with a [one-click quiz](/der-die-das) to test yourself immediately.
 
 ${top100Table}
@@ -223,6 +235,7 @@ Once these feel automatic, move on to [A2 vocabulary](/a2), or jump into a full 
         title: article.title,
         excerpt: article.excerpt,
         contentMarkdown: article.contentMarkdown,
+        category: article.category,
         published: true,
         createdAt: now,
         updatedAt: now,
@@ -233,6 +246,7 @@ Once these feel automatic, move on to [A2 vocabulary](/a2), or jump into a full 
           title: article.title,
           excerpt: article.excerpt,
           contentMarkdown: article.contentMarkdown,
+          category: article.category,
           published: true,
           updatedAt: now,
         },

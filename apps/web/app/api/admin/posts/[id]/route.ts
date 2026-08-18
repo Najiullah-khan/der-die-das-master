@@ -18,6 +18,9 @@ const bodySchema = z
       .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Slug must be lowercase, alphanumeric, hyphen-separated"),
     excerpt: z.string().trim().min(1).max(500),
     contentMarkdown: z.string().trim().min(1),
+    category: z.string().trim().min(1).max(60).nullable(),
+    metaTitle: z.string().trim().min(1).max(70).nullable(),
+    metaDescription: z.string().trim().min(1).max(160).nullable(),
     published: z.boolean(),
   })
   .partial()

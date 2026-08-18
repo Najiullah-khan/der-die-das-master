@@ -267,6 +267,15 @@ export const posts = sqliteTable(
     title: text("title").notNull(),
     excerpt: text("excerpt").notNull(),
     contentMarkdown: text("content_markdown").notNull(),
+    // Free text, not an enum: the admin editor offers curated presets plus a custom option
+    // (lib/blog/category.ts holds the preset list). Nullable so pre-existing/legacy posts
+    // without a category fall back to that same file's curated slug->category map.
+    category: text("category"),
+    // Nullable overrides for generateMetadata (app/blog/[slug]/page.tsx) — falls back to
+    // `title`/`excerpt` when unset, so existing posts and existing metadata behavior are
+    // unaffected until an editor explicitly sets these.
+    metaTitle: text("meta_title"),
+    metaDescription: text("meta_description"),
     published: integer("published", { mode: "boolean" }).notNull().default(false),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
