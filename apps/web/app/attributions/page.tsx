@@ -50,7 +50,7 @@ export default function AttributionsPage() {
           >
             CC BY 2.0 FR
           </a>
-          . Sentences sourced this way are marked "via Tatoeba.org" on the word page they appear on.
+          . Sentences sourced this way are marked &quot;via Tatoeba.org&quot; on the word page they appear on.
         </p>
       </section>
 

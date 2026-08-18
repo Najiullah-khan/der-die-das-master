@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { Article } from "@ddd/shared";
-import { getWordBySlug, getRelatedWords, getWordSlugsByArticle } from "@/lib/db/queries/words";
+import Link from "next/link";
+import type { Article, CefrLevel } from "@ddd/shared";
+import { getWordBySlug, getRelatedWords, getWordSlugsByArticleAndLevels } from "@/lib/db/queries/words";
 import { WordEmoji } from "@/components/word/WordEmoji";
 import { getGenderMnemonic } from "@/lib/seo/mnemonics";
 import { describePluralPattern } from "@/lib/seo/plural-pattern";
@@ -14,9 +15,13 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { PronounceButton } from "@/components/word/PronounceButton";
 import { WordQuizWidget } from "@/components/word/WordQuizWidget";
 
+// High-frequency levels pre-rendered at build time (~1,248 of 5,638 words across all three
+// articles) — see getWordSlugsByArticleAndLevels's doc comment for why this is scoped down.
+const STATIC_GENERATION_LEVELS: CefrLevel[] = ["A1", "A2"];
+
 /** Shared `generateStaticParams` body for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */
 export async function generateWordStaticParams(article: Article) {
-  const rows = await getWordSlugsByArticle(article);
+  const rows = await getWordSlugsByArticleAndLevels(article, STATIC_GENERATION_LEVELS);
   return rows.map((r) => ({ noun: r.slug.slice(article.length + 1) }));
 }
 
@@ -55,17 +60,17 @@ export async function WordPageBody({ article, noun }: { article: Article; noun: 
       <JsonLd data={structuredData} />
 
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500">
-        <a href="/" className="hover:underline">
+        <Link href="/" className="hover:underline">
           Home
-        </a>{" "}
+        </Link>{" "}
         /{" "}
-        <a href={`/${word.article}`} className="hover:underline">
+        <Link href={`/${word.article}`} className="hover:underline">
           {word.article}
-        </a>{" "}
+        </Link>{" "}
         /{" "}
-        <a href={`/dictionary?level=${word.cefrLevel}`} className="hover:underline">
+        <Link href={`/dictionary?level=${word.cefrLevel}`} className="hover:underline">
           {word.cefrLevel}
-        </a>{" "}
+        </Link>{" "}
         / <span className="text-neutral-700 dark:text-neutral-300">{word.article} {word.noun}</span>
       </nav>
 
@@ -113,12 +118,12 @@ export async function WordPageBody({ article, noun }: { article: Article; noun: 
         </blockquote>
       )}
 
-      <a
+      <Link
         href={`/play/${word.cefrLevel}`}
         className="mt-8 inline-block rounded-full bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700"
       >
         Practice this word
-      </a>
+      </Link>
 
       {relatedWords.length > 0 && (
         <div className="mt-12">
@@ -126,12 +131,12 @@ export async function WordPageBody({ article, noun }: { article: Article; noun: 
           <ul className="mt-3 flex flex-wrap gap-2">
             {relatedWords.map((related) => (
               <li key={related.slug}>
-                <a
+                <Link
                   href={wordPath(related)}
                   className="inline-block rounded-full border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
                 >
                   {related.article} {related.noun}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // opennextjs-cloudflare's generated build output (pnpm cf:build) — regenerated every build,
+    // never hand-edited, same reasoning as the .next/out/build ignores above.
+    ".open-next/**",
   ]),
 ]);
 

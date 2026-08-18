@@ -96,7 +96,12 @@ export function CodexBrowser({ initialEntries, initialTotal, limit, initialSearc
     if (mastery !== "any" && isAuthed) params.set("mastery", mastery);
 
     let cancelled = false;
-    setLoading(true);
+    // Deferred off the synchronous effect body (react-hooks/set-state-in-effect) — a microtask
+    // still fires well before the fetch resolves, so the loading indicator's timing is
+    // unaffected; it just avoids the extra synchronous render pass the lint rule flags.
+    queueMicrotask(() => {
+      if (!cancelled) setLoading(true);
+    });
     fetch(`/api/codex?${params.toString()}`)
       .then((res) => (res.ok ? (res.json() as Promise<CodexSearchResponse>) : Promise.reject(res)))
       .then((data) => {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Article, CefrLevel } from "@ddd/shared";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getTopWordsByArticleAndLevel, getWordCountByLevel } from "@/lib/db/queries/words";
@@ -37,9 +38,9 @@ export async function LevelHubBody({ level }: { level: PublicLevel }) {
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500">
-        <a href="/" className="hover:underline">
+        <Link href="/" className="hover:underline">
           Home
-        </a>{" "}
+        </Link>{" "}
         / <span className="text-neutral-700 dark:text-neutral-300">{level}</span>
       </nav>
 
@@ -47,12 +48,12 @@ export async function LevelHubBody({ level }: { level: PublicLevel }) {
       <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-300">{LEVEL_DESCRIPTION[level]}</p>
       <p className="mt-2 text-sm text-neutral-500">{totalCount.toLocaleString()} {level} nouns in the dictionary.</p>
 
-      <a
+      <Link
         href={`/play/${level}`}
         className="animate-cta-glow mt-6 inline-block rounded-full bg-der px-6 py-3 font-semibold text-white shadow-lg transition-transform hover:-translate-y-0.5 hover:bg-der-strong"
       >
         Practice {level} nouns
-      </a>
+      </Link>
 
       <section className="mt-10">
         <h2 className="text-xl font-bold">High-yield {level} nouns</h2>
@@ -62,19 +63,19 @@ export async function LevelHubBody({ level }: { level: PublicLevel }) {
           return (
             <div key={article} className="mt-6">
               <h3 className={`text-sm font-semibold ${ARTICLE_TEXT_CLASS[article]}`}>
-                <a href={`/${article}`} className="hover:underline">
+                <Link href={`/${article}`} className="hover:underline">
                   {article}
-                </a>
+                </Link>
               </h3>
               <ul className="mt-2 flex flex-wrap gap-2">
                 {words.map((word) => (
                   <li key={word.slug}>
-                    <a
+                    <Link
                       href={wordPath(word)}
                       className="inline-block rounded-full border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
                     >
                       {word.article} {word.noun} <span className="text-neutral-500">— {word.translation}</span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -85,12 +86,12 @@ export async function LevelHubBody({ level }: { level: PublicLevel }) {
 
       <div className="mt-12 rounded-2xl border border-neutral-200 p-6 text-center dark:border-neutral-800">
         <p className="font-semibold">Ready to make {level} vocabulary stick?</p>
-        <a
+        <Link
           href={`/play/${level}`}
           className="mt-4 inline-block rounded-full bg-der px-6 py-3 font-semibold text-white hover:bg-der-strong"
         >
           Practice {level} nouns
-        </a>
+        </Link>
       </div>
     </main>
   );

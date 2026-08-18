@@ -48,6 +48,19 @@ pnpm seed
 This reads `packages/word-data/processed/nouns.json` and upserts every word — safe to re-run
 (`onConflictDoNothing`).
 
+Then seed the SEO content layer that's built on top of the word data — both are safe to re-run
+(idempotent upserts, same as `pnpm seed` above):
+
+```bash
+pnpm seed:word-relations   # curated same_topic word relations (lib/db/queries/words.ts's
+                            # getRelatedWords) — populates word_relations from a fixed, hand-
+                            # curated vocabulary list, not generated/random pairings
+pnpm seed:blog-posts       # the educational blog article series (/blog) — includes one post
+                            # (Top 100 A1 Nouns) whose content table is generated live from
+                            # whatever's in `words` at seed time, so re-run it after any
+                            # dictionary data change to keep that table in sync
+```
+
 **Optional:** `pnpm refresh-leaderboard` populates the materialized `leaderboard` table once so
 `/leaderboard?range=alltime` isn't empty on first load — see the Cron Trigger note in Step 4,
 which keeps it fresh automatically after that.
@@ -74,6 +87,24 @@ pnpm cf:deploy     # builds again, then wrangler deploy
 
 The first `wrangler deploy` will prompt you to confirm the Worker name (`der-die-das-master`, set
 in `wrangler.jsonc`) and create it if it doesn't exist yet.
+
+**Building on Windows** — `cf:build` runs cleanly on Windows, but needs two things this repo
+already accounts for or documents:
+
+- `apps/web`'s `build` script explicitly sets `NODE_OPTIONS="--max-old-space-size=8192"` (via
+  `cross-env`, so it works on both Windows and POSIX shells). Without it, `next build`'s
+  standalone-output file-tracing step ran out of heap partway through static generation —
+  `generateStaticParams` for `/der/[noun]` etc. is also deliberately scoped to A1/A2 words only
+  (~1,290 pages, ~2.3 min) rather than all 5,638 (`dynamicParams: true` handles the rest via ISR
+  on first request), which was the other half of fixing that crash and incidentally makes local
+  builds much faster too.
+- OpenNext's later bundling step symlinks files from the pnpm store into `.open-next/` — Windows
+  blocks unprivileged symlink creation, which fails the build with `EPERM: operation not
+  permitted, symlink ...` even after the fix above. **Enable Developer Mode** (Settings → Privacy
+  & security → For developers → Developer Mode → On; no restart needed) to allow it. This is also
+  why the tool prints `WARN OpenNext is not fully compatible with Windows` at the start of every
+  build — for a real deploy pipeline, building on Linux (WSL, or CI) sidesteps this entirely rather
+  than requiring Developer Mode on every machine that runs `cf:build`.
 
 ### Environment variables & secrets
 
@@ -157,7 +188,9 @@ every visitor's browser bundle.
 
 - [ ] **Migrations applied**: `pnpm db:migrate` ran against the *production* Turso DB (not just
       local) — confirm with `turso db shell der-die-das-master ".tables"`.
-- [ ] **Words seeded**: `pnpm seed` ran against production; spot-check `/codex` isn't empty.
+- [ ] **Words seeded**: `pnpm seed`, `pnpm seed:word-relations`, and `pnpm seed:blog-posts` all
+      ran against production; spot-check `/dictionary` isn't empty (`/codex` is a legacy redirect
+      now, not a live page — checking it would just confirm the redirect, not the data).
 - [ ] **Domain resolves over HTTPS**, and `http://` redirects to `https://` (Cloudflare does this
       automatically once the domain is added — just confirm it).
 - [ ] **OAuth redirect URLs updated** in each provider's console, or sign-in will fail with a
@@ -173,9 +206,25 @@ every visitor's browser bundle.
       [Google Search Console](https://search.google.com/search-console) and
       [Bing Webmaster Tools](https://www.bing.com/webmasters) (both free, both external accounts
       only you can create — not something this doc or any script can do for you).
-- [ ] **Rich results check**: paste a `/der/[noun]`, `/die/[noun]`, or `/das/[noun]` URL into
-      Google's [Rich Results Test](https://search.google.com/test/rich-results) — confirms the
-      FAQPage/DefinedTerm/BreadcrumbList JSON-LD parses correctly.
+      Verified as part of this checklist (`app/sitemap.ts`, `app/robots.ts`): every URL it emits
+      is canonical (`wordPath()` — no `/word/:slug` legacy paths, `/dictionary` not `/codex`),
+      and `robots.txt` disallows `/api/`, `/dashboard`, `/admin`.
+- [ ] **Every noun page crawlable, not just in the sitemap**: independent of `sitemap.xml`, every
+      one of the 5,638 seeded words (all A1–B2 — C1/C2 have none yet) is reachable by following
+      real `<a href>` links from a page a crawler would actually land on: the article hubs
+      (`/der`, `/die`, `/das`) and CEFR hubs (`/a1`–`/b2`) link a curated top-frequency subset
+      each, and `/dictionary`'s paginated Prev/Next chain (real hrefs, not client-only —
+      `components/codex/CodexBrowser.tsx`) walks all 113 pages of the *entire* unfiltered word
+      list start to finish, so every word is at most one hop from a page that's itself one hop
+      from the homepage.
+- [ ] **Rich results check — word pages**: paste a `/der/[noun]`, `/die/[noun]`, or `/das/[noun]`
+      URL into Google's [Rich Results Test](https://search.google.com/test/rich-results) —
+      confirms the FAQPage/DefinedTerm/BreadcrumbList JSON-LD (`buildWordStructuredData`,
+      `lib/seo/structured-data.ts`) parses correctly.
+- [ ] **Rich results check — homepage**: paste the homepage URL into the same tool and confirm
+      the `WebSite` + `SearchAction` JSON-LD (`buildWebSiteStructuredData`, rendered in the root
+      layout) parses — this is what lets Google offer a sitelinks search box, targeting
+      `/dictionary?q={search_term_string}`.
 - [ ] **Security headers present**: `curl -I https://yourdomain.com` and confirm
       `Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options` are all there
       (set in `next.config.ts` — should carry through automatically, but worth a real check post-deploy).

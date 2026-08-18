@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Article } from "@ddd/shared";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { GENDER_LABEL, SEMANTIC_CATEGORIES, SUFFIX_RULES } from "@/lib/seo/gender-rules";
@@ -39,13 +40,13 @@ export async function ArticleHubBody({ article }: { article: Article }) {
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-neutral-500">
-        <a href="/" className="hover:underline">
+        <Link href="/" className="hover:underline">
           Home
-        </a>{" "}
+        </Link>{" "}
         /{" "}
-        <a href="/der-die-das" className="hover:underline">
+        <Link href="/der-die-das" className="hover:underline">
           Der, Die, Das Rules
-        </a>{" "}
+        </Link>{" "}
         / <span className="text-neutral-700 dark:text-neutral-300">{article}</span>
       </nav>
 
@@ -56,18 +57,18 @@ export async function ArticleHubBody({ article }: { article: Article }) {
       <p className="mt-2 text-sm text-neutral-500">{totalCount.toLocaleString()} {article} nouns in the dictionary.</p>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <a
+        <Link
           href="/play/A1"
           className={`rounded-full px-6 py-3 font-semibold text-white shadow-lg transition-transform hover:-translate-y-0.5 ${ARTICLE_CTA_CLASS[article]}`}
         >
           Practice with A1 nouns
-        </a>
-        <a
+        </Link>
+        <Link
           href="/der-die-das"
           className="rounded-full border border-neutral-300 px-6 py-3 font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
         >
           Read the full gender guide
-        </a>
+        </Link>
       </div>
 
       <section className="mt-10">
@@ -93,12 +94,12 @@ export async function ArticleHubBody({ article }: { article: Article }) {
               <ul className="mt-2 flex flex-wrap gap-2">
                 {words.map((word) => (
                   <li key={word.slug}>
-                    <a
+                    <Link
                       href={wordPath(word)}
                       className="inline-block rounded-full border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
                     >
                       {word.article} {word.noun} <span className="text-neutral-500">— {word.translation}</span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

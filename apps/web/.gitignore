@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# opennextjs-cloudflare build output (pnpm cf:build)
+/.open-next/
+
 # production
 /build
 
@@ -30,8 +33,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — .env.example is the checked-in template DEPLOYMENT.md and onboarding point to;
+# everything else (.env.local, .env, etc.) holds real secrets and stays untracked.
 .env*
+!.env.example
 
 # vercel
 .vercel

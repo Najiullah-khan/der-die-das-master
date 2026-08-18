@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Repeat2, BookOpenCheck, Flame } from "lucide-react";
 import { getWordCount, getDemoWord } from "@/lib/db/queries/words";
 import { DemoCard } from "@/components/marketing/DemoCard";
@@ -50,22 +51,22 @@ export default async function Home() {
           <p className="max-w-md text-lg text-neutral-600 dark:text-neutral-300">
             Learn German noun genders the fast way. Guess der, die, or das — no account required.
           </p>
-          <a
+          <Link
             href="/play"
             className="animate-cta-glow rounded-full bg-der px-8 py-4 text-lg font-semibold text-white shadow-lg transition-transform hover:-translate-y-0.5 hover:bg-der-strong"
           >
             Start Free Practice
-          </a>
+          </Link>
           <div className="flex gap-4 text-sm text-neutral-500">
-            <a href="/dictionary" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
+            <Link href="/dictionary" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
               Browse the dictionary
-            </a>
-            <a href="/leaderboard" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
+            </Link>
+            <Link href="/leaderboard" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
               Leaderboard
-            </a>
-            <a href="/blog" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
+            </Link>
+            <Link href="/blog" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
               Blog
-            </a>
+            </Link>
           </div>
         </div>
 

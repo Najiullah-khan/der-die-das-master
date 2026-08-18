@@ -67,7 +67,7 @@ export default async function DashboardPage() {
       </p>
 
       <section className="mt-8 rounded-2xl border border-neutral-200 p-5 shadow-sm dark:border-neutral-800">
-        <h2 className="font-semibold">Today's mission</h2>
+        <h2 className="font-semibold">Today&apos;s mission</h2>
         <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
           {mission.label} — {mission.progress}/{mission.goal} {mission.complete && "✅"}
         </p>

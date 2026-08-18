@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, isNull, like, notInArray, or, sql } from "drizzle-orm";
+import { and, asc, eq, gt, inArray, isNull, like, notInArray, or, sql } from "drizzle-orm";
 import type { Article, CefrLevel, CodexMasteryFilter } from "@ddd/shared";
 import { db } from "@/lib/db/client";
 import { userWordStats, wordRelations, words } from "@/lib/db/schema";
@@ -38,9 +38,19 @@ export async function getWordBySlug(slug: string) {
   return word ?? null;
 }
 
-/** All slugs for one article — `generateStaticParams` source for `/der/[noun]` etc. */
-export async function getWordSlugsByArticle(article: Article) {
-  return db.select({ slug: words.slug }).from(words).where(eq(words.article, article));
+/**
+ * Slugs for one article, restricted to a set of CEFR levels — `generateStaticParams` source for
+ * `/der/[noun]` etc. (lib/seo/word-page.tsx). Deliberately narrower than "every word for this
+ * article": statically generating all 5,638 words at build time pushed `next build`'s standalone
+ * file-tracing step past an 8GB heap. Words outside this set aren't missing — each route has
+ * `dynamicParams: true`, so they render on first real request and are cached at the edge from
+ * then on (same ISR `revalidate` the page already has); this only controls what's pre-built.
+ */
+export async function getWordSlugsByArticleAndLevels(article: Article, levels: CefrLevel[]) {
+  return db
+    .select({ slug: words.slug })
+    .from(words)
+    .where(and(eq(words.article, article), inArray(words.cefrLevel, levels)));
 }
 
 /** Top (highest-frequency) nouns for an article+level pair — article hub word lists. */

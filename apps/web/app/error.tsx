@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 
 // Route-segment error boundary — catches errors anywhere in the app tree without tearing down
 // the root layout (Navbar/footer stay visible), unlike global-error.tsx which only fires for
@@ -33,12 +34,12 @@ export default function Error({
         >
           Try again
         </button>
-        <a
+        <Link
           href="/"
           className="rounded-full border border-neutral-300 px-6 py-3 font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
         >
           Go home
-        </a>
+        </Link>
       </div>
     </main>
   );
