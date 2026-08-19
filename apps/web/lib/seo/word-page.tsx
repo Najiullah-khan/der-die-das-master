@@ -8,7 +8,6 @@ import { getGenderMnemonic } from "@/lib/seo/mnemonics";
 import { describePluralPattern } from "@/lib/seo/plural-pattern";
 import { buildWordStructuredData } from "@/lib/seo/structured-data";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { getSiteUrl } from "@/lib/seo/site-url";
 import { wordPath } from "@/lib/seo/word-url";
 import { GENDER_LABEL } from "@/lib/seo/gender-rules";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -30,21 +29,15 @@ export async function generateWordMetadata(article: Article, noun: string): Prom
   const word = await getWordBySlug(`${article}-${noun}`);
   if (!word) return {};
 
-  const base = buildMetadata({
+  // No per-word OG image — word pages fall back to buildMetadata's site-wide default
+  // (app/opengraph-image.png). There used to be one, generated per word via next/og; it was
+  // removed because @vercel/og's edge-runtime bundle (resvg.wasm + friends) pushed the deployed
+  // Worker script over Cloudflare's Free plan 3 MiB compressed size limit.
+  return buildMetadata({
     title: `${word.noun} – der, die or das? German Article & Meaning | Der-Die-Das Master`,
     description: `${word.article} ${word.noun} (${GENDER_LABEL[word.article]}) means "${word.translation}". Plural: ${word.plural}. CEFR level ${word.cefrLevel}.`,
     path: wordPath(word),
   });
-
-  // Per-word OG image (this route's own opengraph-image.tsx) instead of buildMetadata's root
-  // fallback — see lib/seo/metadata.ts's doc comment on why every other page uses the default.
-  const image = { url: `${getSiteUrl()}${wordPath(word)}/opengraph-image`, width: 1200, height: 630 };
-
-  return {
-    ...base,
-    openGraph: { ...base.openGraph, images: [image] },
-    twitter: { ...base.twitter, images: [image.url] },
-  };
 }
 
 /** Shared page body for `app/der/[noun]`, `app/die/[noun]`, `app/das/[noun]`. */

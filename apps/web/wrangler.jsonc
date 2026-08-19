@@ -2,8 +2,30 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "der-die-das-master",
   "main": ".open-next/worker.js",
+  // Wrangler's own minification pass on top of OpenNext's output — not on by default. Safe,
+  // no functional change; added while investigating the Workers Free plan's 3 MiB compressed
+  // script limit (der-die-das-master-najiullah.aws-eu-west-1 deploy attempt, 2026-08-19).
+  "minify": true,
   "compatibility_date": "2025-01-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "vars": {
+    // Added at explicit request to work around the middleware-manifest dynamic-require crash.
+    // Flagged before adding: neither @opennextjs/aws nor @opennextjs/cloudflare reference this
+    // var anywhere, and Next's base-server.js gates 15+ behaviors on it beyond the middleware
+    // manifest — including skipping rewrite/redirect processing, which next.config.ts's
+    // redirects() (the /codex and legacy /word/:slug rules) depends on. Worth watching for
+    // regressions there specifically when you test the deploy.
+    "NEXT_PRIVATE_MINIMAL_MODE": "1",
+    // Non-secret (see DEPLOYMENT.md's Environment Variables Checklist — neither of these is
+    // sensitive, both are meant to be public). Update if the production domain ever changes.
+    "NEXT_PUBLIC_SITE_URL": "https://derdiedasmaster.com",
+    "BETTER_AUTH_URL": "https://derdiedasmaster.com",
+    // The DB endpoint alone isn't sensitive (no auth without the paired TURSO_AUTH_TOKEN secret
+    // — set separately via `wrangler secret put TURSO_AUTH_TOKEN`, never here).
+    "TURSO_DATABASE_URL": "libsql://der-die-das-master-najiullah.aws-eu-west-1.turso.io",
+    // The one account allowed into /admin — see lib/auth/admin.ts.
+    "ADMIN_EMAIL": "niazinajiullahkhan@gmail.com"
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"

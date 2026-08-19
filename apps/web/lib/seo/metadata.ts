@@ -21,9 +21,10 @@ interface BuildMetadataOptions {
  * `images` is set explicitly to the root `opengraph-image` route rather than left for Next's
  * file-convention auto-injection to supply: verified against a real production build that once a
  * page sets its own `openGraph` object (as every caller of this helper does), the root
- * `app/opengraph-image.tsx` fallback stops being attached automatically — so every page needs its
- * own explicit reference. Only `/der`, `/die`, `/das` word pages override this, each with its
- * own per-word image (lib/seo/word-page.tsx).
+ * `app/opengraph-image.png` fallback stops being attached automatically — so every page needs
+ * its own explicit reference. Every page uses this same site-wide image; there's no per-word one
+ * (there used to be — removed because @vercel/og's edge-runtime bundle pushed the deployed
+ * Worker over Cloudflare's Free plan 3 MiB compressed size limit, see lib/seo/word-page.tsx).
  */
 export function buildMetadata({ title, description, path, type = "website", noIndex = false }: BuildMetadataOptions): Metadata {
   const siteUrl = getSiteUrl();
